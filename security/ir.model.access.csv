@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_orden_trabajo,access_orden_trabajo,model_orden_trabajo,,1,1,1,1
+access_orden_trabajo_item,access_orden_trabajo_item,model_orden_trabajo_item,,1,1,1,1
+
