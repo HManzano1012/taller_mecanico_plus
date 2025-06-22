@@ -134,9 +134,9 @@ class OrdenTrabajo(models.Model):
                     vals["vehiculo_marca"] = info.get("Make", "Desconocida")
                     vals["vehiculo_modelo"] = info.get("Model", "Desconocido")
                     vals["vehiculo_anio"] = info.get("ModelYear", "Desconocido")
-                    vals["vehiculo_carroceria"] = info.get("Body Class")
-                    vals["vehiculo_combustible"] = info.get("Fuel Type - Primary")
-                    vals["vehiculo_transmision"] = info.get("Transmission Style")
+                    vals["vehiculo_carroceria"] = info.get("BodyClass")
+                    vals["vehiculo_combustible"] = info.get("FuelTypePrimary")
+                    vals["vehiculo_transmision"] = info.get("TransmissionStyle")
 
                     vals["descripcion"] = " • ".join(
                         filter(
