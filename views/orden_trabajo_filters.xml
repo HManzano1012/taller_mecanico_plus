@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!-- Filtro: Órdenes Pendientes -->
+  <record id="orden_trabajo_filter_pendientes" model="ir.filters">
+    <field name="name">Órdenes Pendientes</field>
+    <field name="model_id">orden.trabajo</field>
+    <field name="domain">[('estado', '=', 'pendiente')]</field>
+    <field name="context">{}</field>
+    <field name="is_default">False</field>
+    <field eval="False" name="user_id"></field>
+  </record>
+  <!-- Filtro: Tipo de Vehículo SUV -->
+  <record id="orden_trabajo_filter_carroceria_suv" model="ir.filters">
+    <field name="name">Tipo de Vehículo: SUV</field>
+    <field name="model_id">orden.trabajo</field>
+    <field name="domain">[('vehiculo_carroceria', 'ilike', 'SUV')]</field>
+    <field name="context">{}</field>
+    <field name="is_default">False</field>
+    <field eval="False" name="user_id"></field>
+  </record>
+  <!-- Filtro: Órdenes por Cliente (ejemplo para cliente_id con ID 1) -->
+  <record id="orden_trabajo_filter_cliente_ejemplo" model="ir.filters">
+    <field name="name">Órdenes de Cliente Ejemplo</field>
+    <field name="model_id">orden.trabajo</field>
+    <field name="domain">[('cliente_id', '=', 1)]</field>
+    <field name="context">{}</field>
+    <field name="is_default">False</field>
+    <field eval="False" name="user_id"></field>
+  </record>
+</odoo>

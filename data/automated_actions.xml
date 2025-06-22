@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <!-- Plantilla de correo -->
+  <record id="orden_trabajo_email_template" model="mail.template">
+    <field name="name">Notificación Orden Completada</field>
+    <field name="model_id" ref="model_orden_trabajo"></field>
+    <field name="subject">Tu orden de trabajo ha sido completada</field>
+    <field name="email_from">${(user.email or 'no-reply@taller.com')}</field>
+    <field name="email_to">${object.cliente_id.email}</field>
+    <field name="body_html" type="html"><![CDATA[
+      <p>Hola ${object.cliente_id.name},</p>
+      <p>Tu orden de trabajo <strong>${object.name}</strong> con placa <strong>${object.placa}</strong> ha sido completada.</p>
+      <p>Gracias por confiar en nosotros.</p>
+    ]]></field>
+  </record>
+  <!-- Acción automatizada -->
+  <record id="orden_trabajo_action_send_mail_on_done" model="base.automation">
+    <field name="name">Enviar correo al completar orden</field>
+    <field name="model_id" ref="model_orden_trabajo"></field>
+    <field name="trigger">on_write</field>
+    <field name="filter_pre_domain">[('estado', '=', 'completado')]</field>
+    <field name="code"><![CDATA[
+if record.cliente_id and record.cliente_id.email:
+    template = env.ref('taller_mecanico_plus.orden_trabajo_email_template')
+    template.send_mail(record.id, force_send=True)
+    ]]></field>
+  </record>
+</odoo>
