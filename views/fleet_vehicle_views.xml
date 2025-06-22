@@ -3,16 +3,12 @@
   <record id="view_fleet_vehicle_form_inherit_vin" model="ir.ui.view">
     <field name="name">fleet.vehicle.form.inherit.vin</field>
     <field name="model">fleet.vehicle</field>
-    <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"/>
+    <!-- <field name="inherit_id" ref="fleet.fleet_vehicle_view_form"></field> -->
     <field name="arch" type="xml">
       <xpath expr="//form/sheet/group" position="inside">
-        <field name="vin"/>
-        <button name="autocomplete_vehicle_info"
-                string="Autocompletar por VIN"
-                type="object"
-                class="btn-primary"/>
+        <field name="vin"></field>
+        <button class="btn-primary" name="autocomplete_vehicle_info" string="Autocompletar por VIN" type="object"></button>
       </xpath>
     </field>
-    </record>
-    </odoo>
-
+  </record>
+</odoo>

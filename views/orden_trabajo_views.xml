@@ -1,29 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
-  <!-- Vista formulario Orden de Trabajo -->
   <record id="view_orden_trabajo_form" model="ir.ui.view">
     <field name="name">orden.trabajo.form</field>
     <field name="model">orden.trabajo</field>
     <field name="arch" type="xml">
-      <form string="Orden de Trabajo">
+      <form string="orden de trabajo">
         <sheet>
           <group>
-            <field name="name" readonly="1"/>
-            <field name="vin"/>
-            <field name="cliente_id"/>
-            <field name="fecha"/>
-            <field name="vehiculo_id"/>
-            <field name="descripcion"/>
-            <field name="estado"/>
+            <group>
+              <field name="name" readonly="1"></field>
+              <field name="vin"></field>
+              <field name="placa"></field>
+              <field name="vehiculo_marca" readonly="1"></field>
+            </group>
+            <group>
+              <field name="vehiculo_modelo" readonly="1"></field>
+              <field name="vehiculo_anio" readonly="1"></field>
+              <field name="fecha"></field>
+              <field name="estado"></field>
+              <field name="cliente_id"></field>
+            </group>
+            <group colspan="2">
+              <field name="descripcion"></field>
+            </group>
           </group>
           <notebook>
-            <page string="Items de Trabajo">
+            <page string="items de trabajo">
               <field name="items_ids">
                 <tree editable="bottom">
-                  <field name="servicio_id"/>
-                  <field name="cantidad"/>
-                  <field name="precio_unitario"/>
+                  <field name="servicio_id"></field>
+                  <field name="cantidad"></field>
+                  <field name="precio_unitario"></field>
                 </tree>
               </field>
             </page>
@@ -32,31 +39,25 @@
       </form>
     </field>
   </record>
-
-  <!-- Vista lista Orden de Trabajo -->
   <record id="view_orden_trabajo_tree" model="ir.ui.view">
     <field name="name">orden.trabajo.tree</field>
     <field name="model">orden.trabajo</field>
     <field name="arch" type="xml">
-      <tree string="Órdenes de Trabajo">
-        <field name="name"/>
-        <field name="cliente_id"/>
-        <field name="vehiculo_id"/>
-        <field name="estado"/>
-        <field name="fecha"/>
+      <tree string="órdenes de trabajo">
+        <field name="name"></field>
+        <field name="cliente_id"></field>
+        <field name="placa"></field>
+        <field name="estado"></field>
+        <field name="fecha"></field>
       </tree>
     </field>
   </record>
-
-  <!-- Acción y menú -->
+  <!-- acción y menú -->
   <record id="action_orden_trabajo" model="ir.actions.act_window">
-    <field name="name">Órdenes de Trabajo</field>
+    <field name="name">órdenes de trabajo</field>
     <field name="res_model">orden.trabajo</field>
     <field name="view_mode">tree,form</field>
   </record>
-
-  <menuitem id="menu_taller_root" name="Taller Mecánico" sequence="10"/>
-  <menuitem id="menu_taller_ordenes" name="Órdenes de Trabajo" parent="menu_taller_root" action="action_orden_trabajo"/>
-
+  <menuitem id="menu_taller_root" name="taller mecánico" sequence="10"></menuitem>
+  <menuitem action="action_orden_trabajo" id="menu_taller_ordenes" name="órdenes de trabajo" parent="menu_taller_root"></menuitem>
 </odoo>
-
