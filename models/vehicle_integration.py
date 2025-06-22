@@ -1,3 +1,5 @@
+import logging
+
 import requests
 from odoo import api, fields, models
 from odoo.exceptions import UserError
@@ -9,9 +11,9 @@ def get_vehicle_info_by_vin(vin, env=None):
         return {}
 
     # Buscar en caché
-    cache = env["vehicle.vin.cache"].search([("vin", "=", vin)], limit=1)
-    if cache:
-        return cache.data
+    # cache = env["vehicle.vin.cache"].search([("vin", "=", vin)], limit=1)
+    # if cache:
+    #     return cache.data
 
     url = f"https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/{vin}?format=json"
 
@@ -25,6 +27,8 @@ def get_vehicle_info_by_vin(vin, env=None):
             raise Exception("Respuesta inválida de la API")
 
         parsed = data["Results"][0]
+        _logger = logging.getLogger(__name__)
+        _logger.info("VIN parsed result: %s", parsed)
 
         # Guardar en caché
         env["vehicle.vin.cache"].create(
@@ -51,22 +55,25 @@ class FleetVehicle(models.Model):
 
     vin = fields.Char(string="VIN")
     year = fields.Char(string="Año del Modelo")
+    body_class = fields.Char(string="Carrocería")
+    fuel_type = fields.Char(string="Tipo de Combustible")
+    transmission = fields.Char(string="Transmisión")
 
     def autocomplete_vehicle_info(self):
         for vehicle in self:
             if not vehicle.vin:
                 raise UserError("El campo VIN está vacío.")
 
-            info = get_vehicle_info_by_vin(vehicle.vin)
+            info = get_vehicle_info_by_vin(vehicle.vin, env=self.env)
 
-            # Mapea los campos comunes
-            if "Model" in info:
-                vehicle.model_id = (
-                    self.env["fleet.vehicle.model"]
-                    .search([("name", "=", info["Model"])], limit=1)
-                    .id
+            if info.get("Model"):
+                model = self.env["fleet.vehicle.model"].search(
+                    [("name", "=", info["Model"])], limit=1
                 )
-            if "Make" in info:
+                if model:
+                    vehicle.model_id = model.id
+
+            if info.get("Make"):
                 brand = self.env["fleet.vehicle.model.brand"].search(
                     [("name", "=", info["Make"])], limit=1
                 )
@@ -75,5 +82,8 @@ class FleetVehicle(models.Model):
                         {"name": info["Make"]}
                     )
                 vehicle.brand_id = brand.id
-            if "Model Year" in info:
-                vehicle.year = info["Model Year"]
+
+            vehicle.year = str(info.get("ModelYear") or "")
+            vehicle.body_class = info.get("Body Class") or ""
+            vehicle.fuel_type = info.get("Fuel Type - Primary") or ""
+            vehicle.transmission = info.get("Transmission Style") or ""

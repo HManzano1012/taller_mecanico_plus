@@ -34,6 +34,18 @@
                 </tree>
               </field>
             </page>
+            <page string="Datos Técnicos">
+              <group>
+                <field name="vehiculo_marca" readonly="1"></field>
+                <field name="vehiculo_modelo" readonly="1"></field>
+                <field name="vehiculo_anio" readonly="1"></field>
+                <field name="vehiculo_carroceria" readonly="1"></field>
+              </group>
+              <group string="Etiquetas Técnicas">
+                <field name="vehiculo_combustible" options="{'class': 'badge-info'}" widget="badge"></field>
+                <field name="vehiculo_transmision" options="{'class': 'badge-primary'}" widget="badge"></field>
+              </group>
+            </page>
           </notebook>
         </sheet>
       </form>
@@ -52,7 +64,6 @@
       </tree>
     </field>
   </record>
-  <!-- Acción y menú -->
   <record id="action_orden_trabajo" model="ir.actions.act_window">
     <field name="name">Órdenes de Trabajo</field>
     <field name="res_model">orden.trabajo</field>

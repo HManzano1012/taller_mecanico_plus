@@ -1,3 +1,6 @@
+from odoo import _, api, fields, models
+
+
 class VehicleVinCache(models.Model):
     _name = "vehicle.vin.cache"
     _description = "Cache de VIN consultado"

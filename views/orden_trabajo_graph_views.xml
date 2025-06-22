@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <!-- Gráfico 1: Órdenes por Marca -->
+  <record id="view_orden_trabajo_graph_por_marca" model="ir.ui.view">
+    <field name="name">orden.trabajo.graph.por.marca</field>
+    <field name="model">orden.trabajo</field>
+    <field name="arch" type="xml">
+      <graph string="Órdenes por Marca de Vehículo" type="bar">
+        <field name="vehiculo_marca" type="row"></field>
+        <field name="id" type="measure"></field>
+      </graph>
+    </field>
+  </record>
+  <record id="action_orden_trabajo_graph_por_marca" model="ir.actions.act_window">
+    <field name="name">Órdenes por Marca</field>
+    <field name="res_model">orden.trabajo</field>
+    <field name="view_mode">graph</field>
+    <field name="view_id" ref="view_orden_trabajo_graph_por_marca"></field>
+  </record>
+  <menuitem action="action_orden_trabajo_graph_por_marca" id="menu_orden_trabajo_graph_marca" name="Órdenes por Marca" parent="menu_taller_root" sequence="30"></menuitem>
+  <!-- Gráfico 2: Órdenes por Estado (global, sin marca) -->
+  <record id="view_orden_trabajo_graph_por_estado" model="ir.ui.view">
+    <field name="name">orden.trabajo.graph.por.estado</field>
+    <field name="model">orden.trabajo</field>
+    <field name="arch" type="xml">
+      <graph string="Órdenes por Estado" type="pie">
+        <field name="estado" type="row"></field>
+        <field name="id" type="measure"></field>
+      </graph>
+    </field>
+  </record>
+  <!-- Gráfico 3: Órdenes por Cliente (Top 10) -->
+  <record id="view_orden_trabajo_graph_por_cliente" model="ir.ui.view">
+    <field name="name">orden.trabajo.graph.por.cliente</field>
+    <field name="model">orden.trabajo</field>
+    <field name="arch" type="xml">
+      <graph sample="10" string="Top 10 Clientes con más Órdenes" type="bar">
+        <field name="cliente_id" order="desc" type="row"></field>
+        <field name="id" type="measure"></field>
+      </graph>
+    </field>
+  </record>
+  <record id="action_orden_trabajo_graph_por_cliente" model="ir.actions.act_window">
+    <field name="name">Top 10 Clientes</field>
+    <field name="res_model">orden.trabajo</field>
+    <field name="view_mode">graph</field>
+    <field name="view_id" ref="view_orden_trabajo_graph_por_cliente"></field>
+  </record>
+  <menuitem action="action_orden_trabajo_graph_por_cliente" id="menu_orden_trabajo_graph_cliente" name="Top 10 Clientes" parent="menu_taller_root" sequence="32"></menuitem>
+  <record id="action_orden_trabajo_graph_por_estado" model="ir.actions.act_window">
+    <field name="name">Órdenes por Estado</field>
+    <field name="res_model">orden.trabajo</field>
+    <field name="view_mode">graph</field>
+    <field name="view_id" ref="view_orden_trabajo_graph_por_estado"></field>
+  </record>
+  <menuitem action="action_orden_trabajo_graph_por_estado" id="menu_orden_trabajo_graph_estado" name="Órdenes por Estado" parent="menu_taller_root" sequence="31"></menuitem>
+</odoo>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <template id="report_orden_trabajo_document">
+    <t t-call="web.external_layout">
+      <div class="page">
+        <h2>Orden de Trabajo: <span t-esc="doc.name"></span></h2>
+        <p>
+          <strong>Cliente:</strong>
+          <span t-esc="doc.cliente_id.name"></span>
+        </p>
+        <p>
+          <strong>VIN:</strong>
+          <span t-esc="doc.vin"></span>
+        </p>
+        <p>
+          <strong>Placa:</strong>
+          <span t-esc="doc.placa"></span>
+        </p>
+        <p>
+          <strong>Fecha:</strong>
+          <span t-esc="doc.fecha"></span>
+        </p>
+        <h4>Datos Técnicos</h4>
+        <ul>
+          <li>
+            <strong>Marca:</strong>
+            <span t-esc="doc.vehiculo_marca"></span>
+          </li>
+          <li>
+            <strong>Modelo:</strong>
+            <span t-esc="doc.vehiculo_modelo"></span>
+          </li>
+          <li>
+            <strong>Año:</strong>
+            <span t-esc="doc.vehiculo_anio"></span>
+          </li>
+          <li>
+            <strong>Carrocería:</strong>
+            <span t-esc="doc.vehiculo_carroceria"></span>
+          </li>
+          <li>
+            <strong>Combustible:</strong>
+            <span t-esc="doc.vehiculo_combustible"></span>
+          </li>
+          <li>
+            <strong>Transmisión:</strong>
+            <span t-esc="doc.vehiculo_transmision"></span>
+          </li>
+        </ul>
+        <h4>Items de Trabajo</h4>
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th>Servicio</th>
+              <th>Cantidad</th>
+              <th>Precio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <t t-as="item" t-foreach="doc.items_ids">
+              <tr>
+                <td>
+                  <span t-esc="item.servicio_id.name"></span>
+                </td>
+                <td>
+                  <span t-esc="item.cantidad"></span>
+                </td>
+                <td>
+                  <span t-esc="item.precio_unitario"></span>
+                </td>
+              </tr>
+            </t>
+          </tbody>
+        </table>
+      </div>
+    </t>
+  </template>
+</odoo>
