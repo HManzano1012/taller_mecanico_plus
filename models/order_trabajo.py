@@ -13,7 +13,7 @@ class OrdenTrabajo(models.Model):
         required=True,
         copy=False,
         readonly=True,
-        default=lambda self: _("New"),
+        default="New",
     )
     vin = fields.Char(string="VIN", required=True)
     cliente_id = fields.Many2one("res.partner", string="Cliente", required=True)
@@ -25,6 +25,10 @@ class OrdenTrabajo(models.Model):
     vehiculo_marca = fields.Char(string="Marca del vehículo", required=True)
     vehiculo_modelo = fields.Char(string="Modelo del vehículo", required=True)
     vehiculo_anio = fields.Char(string="Año del vehículo", required=True)
+    vehiculo_carroceria = fields.Char(string="Carrocería")
+    vehiculo_combustible = fields.Char(string="Combustible")
+    vehiculo_transmision = fields.Char(string="Transmisión")
+
     estado = fields.Selection(
         [
             ("pendiente", "Pendiente"),
@@ -42,6 +46,16 @@ class OrdenTrabajo(models.Model):
         if self.vin:
             try:
                 info = get_vehicle_info_by_vin(self.vin)
+
+                if not info:
+                    return {
+                        "warning": {
+                            "title": "VIN no encontrado",
+                            "message": "No se encontró información para el VIN ingresado.",
+                            "type": "notification",
+                        }
+                    }
+
                 self.vehiculo_marca = info.get("Make")
                 self.vehiculo_modelo = info.get("Model")
                 self.vehiculo_anio = info.get("Model Year")
@@ -64,14 +78,33 @@ class OrdenTrabajo(models.Model):
                     )
                 )
             except Exception as e:
-                raise UserError(f"Error al consultar el VIN: {str(e)}")
+                return {
+                    "warning": {
+                        "title": "Error consultando VIN",
+                        "message": str(e),
+                        "type": "notification",
+                    }
+                }
+
+        return {}
 
     def action_buscar_vehiculo_por_vin(self):
         for orden in self:
             if not orden.vin:
                 raise UserError("Debe ingresar un VIN antes de buscar.")
 
-            info = get_vehicle_info_by_vin(orden.vin)
+            try:
+                info = get_vehicle_info_by_vin(self.vin, env=self.env)
+            except Exception as e:
+                return {
+                    "warning": {
+                        "title": "Error al consultar VIN",
+                        "message": str(e),
+                        "type": "notification",
+                    }
+                }
+            if not info:
+                raise UserError("No se encontró información para el VIN ingresado.")
 
             marca = info.get("Make")
             modelo = info.get("Model")
@@ -91,11 +124,59 @@ class OrdenTrabajo(models.Model):
                 )
             )
 
-            # Solo modifica en memoria (no guarda todavía)
             orden.vehiculo_marca = marca
             orden.vehiculo_modelo = modelo
             orden.vehiculo_anio = anio
-            orden.vehiculo_descripcion = descripcion
+            orden.descripcion = descripcion
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            vin = vals.get("vin")
+            if vin:
+                try:
+                    info = get_vehicle_info_by_vin(vin)
+                    vals["vehiculo_marca"] = info.get("Make", "Desconocida")
+                    vals["vehiculo_modelo"] = info.get("Model", "Desconocido")
+                    vals["vehiculo_anio"] = info.get("Model Year", "Desconocido")
+
+                    descripcion = " • ".join(
+                        filter(
+                            None,
+                            [
+                                vals["vehiculo_marca"],
+                                vals["vehiculo_modelo"],
+                                vals["vehiculo_anio"],
+                                info.get("Body Class"),
+                                info.get("Fuel Type - Primary"),
+                                info.get("Transmission Style"),
+                            ],
+                        )
+                    )
+                    vals["descripcion"] = descripcion
+
+                except Exception as e:
+                    raise UserError(f"Error al consultar el VIN: {str(e)}")
+
+            required_fields = [
+                "vin",
+                "vehiculo_marca",
+                "vehiculo_modelo",
+                "vehiculo_anio",
+            ]
+            for field in required_fields:
+                if not vals.get(field):
+                    raise UserError(
+                        _(f"El campo '{field}' es obligatorio para crear la orden.")
+                    )
+
+            # Generar secuencia si name es 'New'
+            if vals.get("name", _("New")) == _("New"):
+                vals["name"] = self.env["ir.sequence"].next_by_code(
+                    "orden.trabajo.seq"
+                ) or _("New")
+
+        return super().create(vals_list)
 
 
 class OrdenTrabajoItem(models.Model):
